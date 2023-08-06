@@ -67,3 +67,8 @@ El presente código despliega un servidor node.js/express sobre el que se busca 
 
 
 Adicionalmente a estos endpoints, se requiere ampliar el paquete `People` con las clases y funciones que sean necesarias para cubrir el caso de que el formato del objeto retornado por la SWAPI sea en idioma Wookiee.
+
+## Librerías adicionales
+## Joi
+Es la librería para ayudar a validar los esquemas y coherencia de los datos recibidos
+en el el request de los end-points
