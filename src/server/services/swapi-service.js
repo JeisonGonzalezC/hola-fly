@@ -13,12 +13,18 @@ const services = {};
  * @param {*} app access to swapi utils
  * @returns Info swapi people
  */
-const getInfoPeopleSwapiById = async (id, app) => {
-    const { name, height, mass, homeworld  } = await app.swapiFunctions.genericRequest(`${process.env.URL_SWAPI}/people/${id}`, 'GET', null, true);
-    if(!homeworld) throw new HttpError('People not found', 404);
+const getInfoPeopleSwapiById = async (id, isWookiee, app) => {
+    const idWithFormat = isWookiee ? `${id}?format=wookiee`: id ;
+    const { name, height, mass, homeworld } = await app.swapiFunctions.genericRequest(
+        `${process.env.URL_SWAPI}/people/${idWithFormat}`, 'GET', null, isWookiee
+    );
+    if(!name) throw new HttpError('People not found', 404);
 
-    const planet = await app.swapiFunctions.genericRequest(homeworld, 'GET', null, true);
     const homeworldId = homeworld.match(/\/(\d+)\/$/)[1];
+
+    const planet = await app.swapiFunctions.genericRequest(
+        `${process.env.URL_SWAPI}/planets/${homeworldId}`, 'GET', null
+    );
 
     return { 
         id: Number(id),
@@ -36,8 +42,8 @@ const getInfoPeopleSwapiById = async (id, app) => {
  * @param {*} app access to swapi utils
  * @returns new people instance
  */
-const createPeopleIfNotExist = async(id, app) => {
-    const peopleInfo = await getInfoPeopleSwapiById(id, app);
+const createPeopleIfNotExist = async(id, isWookiee, app) => {
+    const peopleInfo = await getInfoPeopleSwapiById(id, isWookiee, app);
     return createPeople(peopleInfo);
 }
 
@@ -47,11 +53,19 @@ const createPeopleIfNotExist = async(id, app) => {
  * @param {*} res response ep
  * @param {*} app access to swapi utils
  */
-const getPeopleByID = async (id, res, app) => {
+const getPeopleByID = async (params) => {
+    const {
+        id,
+        isWookiee,
+        res, 
+        app
+    } = params;
+
     try {
         let people = new CommonPeople(id);
         await people.init();
-        if(!people.name) people = await createPeopleIfNotExist(id, app);
+
+        if(!people.name) people = await createPeopleIfNotExist(id, isWookiee, app);
     
         res.json({
             name: people.name,
@@ -71,8 +85,11 @@ const getPeopleByID = async (id, res, app) => {
  * @param {*} app app swapi utils
  * @returns 
  */
-const getInfoPlanetSwapiById = async (id, app) => {
-    const { name, gravity } = await app.swapiFunctions.genericRequest(`${process.env.URL_SWAPI}/planets/${id}`, 'GET', null, true);
+const getInfoPlanetSwapiById = async (id, isWookiee, app) => {
+    const idWithFormat = isWookiee ? `${id}?format=wookiee`: id ;
+    const { name, gravity } = await app.swapiFunctions.genericRequest(
+        `${process.env.URL_SWAPI}/planets/${idWithFormat}`, 'GET', null, isWookiee
+    );
     if(!name) throw new HttpError('Planet not found', 404);
 
     const numericGravity = parseFloat(gravity);
@@ -90,8 +107,8 @@ const getInfoPlanetSwapiById = async (id, app) => {
  * @param {*} app app swapi util
  * @returns 
  */
-const createPlanetIfNotExist = async(id, app) => {
-    const planetInfo = await getInfoPlanetSwapiById(id, app);
+const createPlanetIfNotExist = async(id, isWookiee, app) => {
+    const planetInfo = await getInfoPlanetSwapiById(id, isWookiee, app);
     return createPlanet(planetInfo);
 }
 
@@ -101,12 +118,18 @@ const createPlanetIfNotExist = async(id, app) => {
  * @param {*} res response
  * @param {*} app app swapi utils
  */
-const getPlanetByID = async (id, res, app) => {
+const getPlanetByID = async (params) => {
+    const {
+        id, 
+        isWookiee,
+        res, 
+        app
+    } = params;
     try {
         let planet = new Planet(id);
         await planet.init();
 
-        if(!planet.name) planet = await createPlanetIfNotExist(id, app);
+        if(!planet.name) planet = await createPlanetIfNotExist(id, isWookiee, app);
 
         res.json({
             name: planet.name,
@@ -130,6 +153,7 @@ const getWeightOnPlanetRandom = async (params) => {
     const {
         peopleId,
         planetId,
+        isWookiee,
         res, 
         app
     } = params;
@@ -137,11 +161,11 @@ const getWeightOnPlanetRandom = async (params) => {
     try {
         let people = new CommonPeople(peopleId);
         await people.init();
-        if(!people.name) people = await createPeopleIfNotExist(peopleId, app);
+        if(!people.name) people = await createPeopleIfNotExist(peopleId, isWookiee, app);
 
         let planet = new Planet(planetId);
         await planet.init();
-        if(!planet.name) planet = await createPlanetIfNotExist(planetId, app);
+        if(!planet.name) planet = await createPlanetIfNotExist(planetId, isWookiee, app);
 
         if(people.homeworldId ===  planet.id ) {
             throw new HttpError('calculate mass with planet different from natal', 400);
