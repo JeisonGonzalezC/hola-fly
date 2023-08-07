@@ -1,5 +1,4 @@
 class AbstractPeople {
-
     constructor(id) {
         if (this.constructor == AbstractPeople) {
             throw new Error("Abstract classes can't be instantiated.");
@@ -34,7 +33,9 @@ class AbstractPeople {
         return this.homeworlId;
     }
 
-    getWeightOnPlanet(planetId){
+    getWeightOnPlanet(peopleMass, gravity) {
         throw new Error('To be implemented');
     }
 }
+
+module.exports = AbstractPeople;

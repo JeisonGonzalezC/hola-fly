@@ -1,4 +1,4 @@
-const { getPeopleByID, getPlanetByID } = require("../services/swapi-service");
+const { getPeopleByID, getPlanetByID, getWeightOnPlanetRandom } = require("../services/swapi-service");
 const joi = require('joi');
 
 const _isWookieeFormat = (req) => {
@@ -19,7 +19,7 @@ const applySwapiEndpoints = (server, app) => {
             return res.status(400).json({ error: 'ID is required and must be an integer.' });
         }
 
-        return getPeopleByID(req, res, app);
+        return getPeopleByID(req.params.id, res, app);
     });
 
     server.get('/hfswapi/getPlanet/:id', async (req, res) => {
@@ -28,11 +28,24 @@ const applySwapiEndpoints = (server, app) => {
             return res.status(400).json({ error: 'ID is required and must be an integer.' });
         }
 
-        return getPlanetByID(req, res, app);
+        return getPlanetByID(req.params.id, res, app);
     });
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
-        res.sendStatus(501);
+        const schemaWeightOfPlanet = joi.object({
+            peopleId: joi.number().integer().required(),
+            planetId: joi.number().integer().required(),
+        });
+        const { error } = schemaWeightOfPlanet.validate(req.query);
+        if (error) {
+            return res.status(400).json({ error: error.details[0].message });
+        }
+        return getWeightOnPlanetRandom({
+            peopleId: req.query.peopleId,
+            planetId: req.query.planetId,
+            res, 
+            app
+        });
     });
 
     server.get('/hfswapi/getLogs',async (req, res) => {

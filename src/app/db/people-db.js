@@ -1,5 +1,6 @@
 'use strict';
 const { db } = require("../../app");
+const CommonPeople = require("../People/commonPeople");
 
 const dbPeople = {};
 
@@ -14,7 +15,10 @@ const createPeople = async(peopleInfo) => {
         homeworld_name: peopleInfo.homeworld,
         homeworld_id: peopleInfo.homeworldId
     });
-    return peopleToSave.save();
+    await peopleToSave.save();
+    const people = new CommonPeople(peopleInfo.id);
+    await people.init();
+    return people;
 }
 
 dbPeople.createPeople = createPeople;

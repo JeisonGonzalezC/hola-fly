@@ -1,5 +1,6 @@
 'use strict';
 const { db } = require("../../app");
+const Planet = require("../Planet/Planet");
 
 const dbPlanet = {};
 
@@ -9,8 +10,12 @@ const dbPlanet = {};
  * @returns Planet entity
  */
 const createPlanet = async(planetInfo) => {
-    const peopleToSave = db.swPlanet.build(planetInfo);
-    return peopleToSave.save();
+    const planetToSave = db.swPlanet.build(planetInfo);
+    await planetToSave.save();
+
+    const planet = new Planet(planetInfo.id);
+    await planet.init();
+    return planet;
 }
 
 dbPlanet.createPlanet = createPlanet;
