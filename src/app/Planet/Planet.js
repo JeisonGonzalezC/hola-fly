@@ -1,10 +1,20 @@
+const db = require("../db");
+
 class Planet {
     constructor(id){
-        throw new Error('To be implemented');
+        this.id = id;
     }
 
-    async init(){
-        throw new Error('To be implemented');
+    async init() {
+        try {
+            const planet = await db.swPlanet.findByPk(this.id);
+            if (!planet) return;
+
+            this.name = planet.name;
+            this.gravity = planet.gravity;
+        } catch (error) {
+            throw new Error(`Error init Planet: ${error.message}`);
+        }
     }
 
     getName() {
@@ -15,3 +25,5 @@ class Planet {
         return this.gravity;
     }
 }
+
+module.exports = Planet;
