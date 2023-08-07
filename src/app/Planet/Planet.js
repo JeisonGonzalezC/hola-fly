@@ -7,7 +7,7 @@ class Planet {
 
     async init() {
         try {
-            const planet = await db.swPlanet.findByPk(this.id);
+            const planet = await db.swPlanet.findByPk(Number(this.id));
             if (!planet) return;
 
             this.name = planet.name;

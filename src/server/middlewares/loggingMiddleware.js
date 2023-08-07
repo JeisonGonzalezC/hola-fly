@@ -1,9 +1,15 @@
 const loggingMiddleware = (db) =>
-    (req, res, next) => {
+    async (req, res, next) => {
         const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim();
         const headers = JSON.stringify(req.headers);
         const originalUrl = req.originalUrl;
-        // Persist this info on DB
+
+        const logToSave = db.logging.build({
+            ip,
+            header: headers,
+            action: originalUrl
+        });
+        await logToSave.save();
         next();
     }
 

@@ -49,7 +49,7 @@ const createPeopleIfNotExist = async(id, app) => {
  */
 const getPeopleByID = async (id, res, app) => {
     try {
-        let people = new CommonPeople(Number(id));
+        let people = new CommonPeople(id);
         await people.init();
         if(!people.name) people = await createPeopleIfNotExist(id, app);
     
@@ -103,7 +103,7 @@ const createPlanetIfNotExist = async(id, app) => {
  */
 const getPlanetByID = async (id, res, app) => {
     try {
-        let planet = new Planet(Number(id));
+        let planet = new Planet(id);
         await planet.init();
 
         if(!planet.name) planet = await createPlanetIfNotExist(id, app);
@@ -135,11 +135,11 @@ const getWeightOnPlanetRandom = async (params) => {
     } = params;
 
     try {
-        let people = new CommonPeople(Number(peopleId));
+        let people = new CommonPeople(peopleId);
         await people.init();
         if(!people.name) people = await createPeopleIfNotExist(peopleId, app);
 
-        let planet = new Planet(Number(planetId));
+        let planet = new Planet(planetId);
         await planet.init();
         if(!planet.name) planet = await createPlanetIfNotExist(planetId, app);
 
@@ -154,7 +154,6 @@ const getWeightOnPlanetRandom = async (params) => {
         res.status(error?.statusCode ?? 500).json({ error: error.message });
     }
 }
-
 
 services.getPeopleByID = getPeopleByID;
 services.getPlanetByID = getPlanetByID;

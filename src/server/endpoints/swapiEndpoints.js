@@ -52,7 +52,6 @@ const applySwapiEndpoints = (server, app) => {
         const data = await app.db.logging.findAll();
         res.send(data);
     });
-
 }
 
 module.exports = applySwapiEndpoints;

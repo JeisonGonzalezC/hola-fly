@@ -10,7 +10,7 @@ class CommonPeople extends AbstractPeople {
   
     async init() {
         try {
-            const person = await db.swPeople.findByPk(this.id);
+            const person = await db.swPeople.findByPk(Number(this.id));
             if (!person) return;
 
             this.name = person.name;

@@ -11,7 +11,7 @@ const createExpressServer = async app => {
 
 	server.get('/', async (req, res) => {
 		if(process.env.NODE_ENV === 'develop'){
-				res.send('Test Enviroment');
+			res.send('Test Enviroment');
 		} else {
 		    res.sendStatus(200);
 		}
