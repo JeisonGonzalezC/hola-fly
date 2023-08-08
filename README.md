@@ -72,3 +72,8 @@ Adicionalmente a estos endpoints, se requiere ampliar el paquete `People` con la
 ## Joi
 Es la librería para ayudar a validar los esquemas y coherencia de los datos recibidos
 en el el request de los end-points
+## Jest
+Es la librería para realizar tests unitarios sobres las funciones creadas para evitar bugs.
+En los test unitarios es necesario hacerlo con otra base de datos o haciendo mock de las peticiones que se realizan
+tanto a direcciones externas cómo a la base de datos que se usa para guardar datos reales.
+En este caso para simplificar las pruebas voy a probar el happy path de las 3 funciones principales
